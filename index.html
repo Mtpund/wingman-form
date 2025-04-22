@@ -35,6 +35,7 @@
     }
 
     .form-wrapper {
+      min-height: 500px;
       background: #FFFFFF;
       padding: 2rem;
       border-radius: 12px;
@@ -50,19 +51,12 @@
     
 
     .form-step {
-      position: absolute;
-      top: 0;
-      left: 0;
+      display: none;
       width: 100%;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.4s ease;
     }
 
     .form-step.active {
-      opacity: 1;
-      pointer-events: auto;
-      position: relative;
+      display: block;
     }
 
     .bubble-option {
@@ -240,7 +234,10 @@
     };
 
     nextBtns.forEach(btn => {
-      btn.addEventListener('click', () => goToStep(currentStep + 1));
+  btn.addEventListener('click', () => {
+    goToStep(currentStep + 1);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
     });
 
     closePopup.addEventListener('click', () => {
