@@ -6,50 +6,6 @@
   <title>Wingman Mental Health | Onboarding</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    .progress-bar {
-      display: flex;
-      gap: 4px;
-      margin-bottom: 2rem;
-    }
-
-    .progress-segment {
-      flex: 1;
-      height: 8px;
-      background-color: #333;
-      border-radius: 4px;
-    }
-
-    .progress-segment.active {
-      background-color: #7DF9FF;
-    }
-    body {
-      margin: 0;
-      font-family: 'obviously', sans-serif;
-      background: #000;
-      color: #000000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
-
-    .form-wrapper {
-      min-height: 500px;
-      background: #FFFFFF;
-      padding: 2rem;
-      border-radius: 12px;
-      position: relative;
-    }
-
-    .form-step {
-      display: none;
-      width: 100%;
-    }
-
-    .form-step.active {
-      display: block;
-    }
-
     .bubble-option {
       border: 1px solid #000000;
       border-radius: 10px;
@@ -70,19 +26,38 @@
       border-color: #7DF9FF !important;
     }
 
-    .hidden {
+    .form-step {
       display: none;
     }
 
-    .popup {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.6);
+    .form-step.active {
+      display: block;
+    }
+
+ .progress-bar {
       display: flex;
-      align-items: center;
+      gap: 4px;
+      margin-bottom: 2rem;
+    }
+
+    .progress-segment {
+      flex: 1;
+      height: 8px;
+      background-color: #333;
+      border-radius: 4px;
+    }
+
+    .progress-segment.active {
+      background-color: #7DF9FF;
+    }
+    body {
+      background: #000;
+      color: #000000;
+      display: flex;
       justify-content: center;
-      z-index: 1000;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 2rem;
     }
 
     .popup-content {
@@ -124,7 +99,8 @@
   </style>
 </head>
 <body>
-  <div class="form-wrapper">
+  <div id="form-top"></div>
+  <div class="form-wrapper" style="background: #FFFFFF; padding: 2rem; border-radius: 12px; margin-top: 3rem;">
     <div class="progress-bar" id="progressBar">
       <div class="progress-segment active" data-index="0"></div>
       <div class="progress-segment" data-index="1"></div>
@@ -136,7 +112,7 @@
     </div>
 
     <form id="wingman-form">
-      <div class="form-step active" data-step="1">
+      <div class="form-step active" data-step="1" style="margin-top: 2rem;">
         <label style="font-size: 1.75rem; font-weight: 700; display: block; margin-bottom: 0.5rem;">What are your goals?</label>
         <div class="bubble-group" id="goals-options" style="margin-top: 1rem;"></div>
         <button type="button" class="next-btn">Next</button>
@@ -200,119 +176,118 @@
     </div>
   </div>
 
-  <script>
-    const progressBar = document.getElementById('progressBar');
-    const steps = document.querySelectorAll('.form-step');
-    const nextBtns = document.querySelectorAll('.next-btn');
-    const popup = document.getElementById('crisis-popup');
-    const closePopup = document.getElementById('close-popup');
-    const bubbleGroups = document.querySelectorAll('.bubble-group');
+<script>
+  const progressBar = document.getElementById('progressBar');
+  const steps = document.querySelectorAll('.form-step');
+  const nextBtns = document.querySelectorAll('.next-btn');
+  const popup = document.getElementById('crisis-popup');
+  const closePopup = document.getElementById('close-popup');
 
-    let currentStep = 0;
+  let currentStep = 0;
 
-    const stepProgress = () => {
-      const segments = document.querySelectorAll('.progress-segment');
-      segments.forEach((seg, i) => {
-        seg.classList.toggle('active', i <= currentStep);
-      });
-    };
-
-    const goToStep = (step) => {
-      steps.forEach((s, i) => s.classList.toggle('active', i === step));
-      currentStep = step;
-      stepProgress();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-
-    nextBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        goToStep(currentStep + 1);
-      });
+  const stepProgress = () => {
+    const segments = document.querySelectorAll('.progress-segment');
+    segments.forEach((seg, i) => {
+      seg.classList.toggle('active', i <= currentStep);
     });
+  };
 
-    closePopup.addEventListener('click', () => {
-      popup.classList.add('hidden');
-      popup.style.display = 'none';
+  const goToStep = (step) => {
+    steps.forEach((s, i) => s.classList.toggle('active', i === step));
+    currentStep = step;
+    stepProgress();
+    location.hash = '#form-top';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  nextBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      goToStep(currentStep + 1);
     });
+  });
 
-    const createBubbleOptions = (containerId, options, multi = true, trigger = null) => {
-      const container = document.getElementById(containerId);
-      if (!container) return;
-      options.forEach(text => {
-        const div = document.createElement('div');
-        div.className = 'bubble-option';
-        div.textContent = text;
-        div.onclick = () => {
-          if (!multi) {
-            container.querySelectorAll('.bubble-option').forEach(o => o.classList.remove('selected'));
-          }
-          div.classList.toggle('selected');
-          if (text === trigger) {
-            popup.classList.remove('hidden');
-            popup.style.display = 'flex';
-          }
-          if (!multi) goToStep(currentStep + 1);
-        };
-        container.appendChild(div);
-      });
-    };
+  closePopup.addEventListener('click', () => {
+    popup.classList.add('hidden');
+    popup.style.display = 'none';
+  });
 
-    const goalOptions = [
-      "Be a better dad/partner/friend",
-      "Be more productive at work",
-      "Break bad habits (like drinking too much, smoking, or procrastinating)",
-      "Build better daily routines",
-      "Communicate better with my partner or family",
-      "Deal with big life changes (like a breakup, job loss, becoming a dad, etc.)",
-      "Deal with grief or loss",
-      "Eat healthier",
-      "Feel happier or more motivated",
-      "Feel less anxious",
-      "Feel less lonely",
-      "Feel more in control of my emotions",
-      "Find more meaning or purpose in life",
-      "Get support for quitting substances (alcohol, drugs, etc.)",
-      "Get to the gym more regularly",
-      "Handle anger or frustration better",
-      "Have more confidence",
-      "Have more energy during the day",
-      "Improve work-life balance",
-      "Make more time for hobbies or things I enjoy",
-      "Make new friends or improve my social life",
-      "Manage money or financial stress better",
-      "Prepare for a new job or career change",
-      "Reduce stress",
-      "Set and stick to personal goals",
-      "Sleep better",
-      "Spend less time on my phone or gaming",
-      "Stay accountable to my goals",
-      "Stop feeling stuck or overwhelmed",
-      "Other"
-    ];
-    createBubbleOptions('goals-options', goalOptions);
-
-    createBubbleOptions('looking-for-options', [
-      "Mental Health Coaching",
-      "Therapy/Counseling",
-      "Community/Support Groups",
-      "Crisis Support/Immediate Help",
-      "Self Help Resources/Tools",
-      "Peer Support/Mentorship",
-      "Specialized Support (i.e. addiction, fatherhood, relationships, identity, etc.)"
-    ].sort(), true, "Crisis Support/Immediate Help");
-
-    createBubbleOptions('coach-superpower-options', [
-      "Incredible Listener",
-      "Amazing Motivator",
-      "Wealth of Wisdom",
-      "Calm, Cool, and Collected",
-      "A+ Accountability",
-      "Your Bigger Fan & Champion"
-    ], false);
-
-    document.querySelectorAll('[data-step="4"] .bubble-option').forEach(opt => {
-      opt.addEventListener('click', () => goToStep(currentStep + 1));
+  const createBubbleOptions = (containerId, options, multi = true, trigger = null) => {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    options.forEach(text => {
+      const div = document.createElement('div');
+      div.className = 'bubble-option';
+      div.textContent = text;
+      div.onclick = () => {
+        if (!multi) {
+          container.querySelectorAll('.bubble-option').forEach(o => o.classList.remove('selected'));
+        }
+        div.classList.toggle('selected');
+        if (text === trigger) {
+          popup.classList.remove('hidden');
+          popup.style.display = 'flex';
+        }
+        if (!multi) goToStep(currentStep + 1);
+      };
+      container.appendChild(div);
     });
-  </script>
+  };
+
+  createBubbleOptions('goals-options', [
+    "Be a better dad/partner/friend",
+    "Be more productive at work",
+    "Break bad habits (like drinking too much, smoking, or procrastinating)",
+    "Build better daily routines",
+    "Communicate better with my partner or family",
+    "Deal with big life changes (like a breakup, job loss, becoming a dad, etc.)",
+    "Deal with grief or loss",
+    "Eat healthier",
+    "Feel happier or more motivated",
+    "Feel less anxious",
+    "Feel less lonely",
+    "Feel more in control of my emotions",
+    "Find more meaning or purpose in life",
+    "Get support for quitting substances (alcohol, drugs, etc.)",
+    "Get to the gym more regularly",
+    "Handle anger or frustration better",
+    "Have more confidence",
+    "Have more energy during the day",
+    "Improve work-life balance",
+    "Make more time for hobbies or things I enjoy",
+    "Make new friends or improve my social life",
+    "Manage money or financial stress better",
+    "Prepare for a new job or career change",
+    "Reduce stress",
+    "Set and stick to personal goals",
+    "Sleep better",
+    "Spend less time on my phone or gaming",
+    "Stay accountable to my goals",
+    "Stop feeling stuck or overwhelmed",
+    "Other"
+  ]);
+
+  createBubbleOptions('looking-for-options', [
+    "Mental Health Coaching",
+    "Therapy/Counseling",
+    "Community/Support Groups",
+    "Crisis Support/Immediate Help",
+    "Self Help Resources/Tools",
+    "Peer Support/Mentorship",
+    "Specialized Support (i.e. addiction, fatherhood, relationships, identity, etc.)"
+  ].sort(), true, "Crisis Support/Immediate Help");
+
+  createBubbleOptions('coach-superpower-options', [
+    "Incredible Listener",
+    "Amazing Motivator",
+    "Wealth of Wisdom",
+    "Calm, Cool, and Collected",
+    "A+ Accountability",
+    "Your Bigger Fan & Champion"
+  ], false);
+
+  document.querySelectorAll('[data-step="4"] .bubble-option').forEach(opt => {
+    opt.addEventListener('click', () => goToStep(currentStep + 1));
+  });
+</script>
 </body>
 </html>
