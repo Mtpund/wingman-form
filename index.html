@@ -228,10 +228,11 @@
     };
 
     const goToStep = (step) => {
-      steps.forEach((s, i) => s.classList.toggle('active', i === step));
-      currentStep = step;
-      stepProgress();
-    };
+    steps.forEach((s, i) => s.classList.toggle('active', i === step));
+    currentStep = step;
+    stepProgress();
+  };
+
 
     };
 
