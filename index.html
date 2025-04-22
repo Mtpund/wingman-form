@@ -46,10 +46,13 @@
       margin-bottom: 1rem;
     }
     .input-wrapper {
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
-    }
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin-top: 1.5rem;
+}
     textarea, input[type="text"], input[type="email"], input[type="date"] {
       font-size: 1rem;
       padding: 12px 16px;
@@ -60,17 +63,22 @@
       color: #000;
     }
     .option-button {
-      background-color: #f0f0f0;
-      border: 1px solid #1c7155;
-      border-radius: 20px;
-      padding: 10px 14px;
-      font-size: 0.9rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      display: inline-block;
-      margin: 4px;
-      color: #000;
-    }
+  background-color: #f0f0f0;
+  border: 1px solid #1c7155;
+  border-radius: 20px;
+  padding: 6px 10px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 4px;
+  color: #000;
+  white-space: nowrap;
+  flex: 0 1 auto;
+}
+.option-button.selected {
+  background-color: #1c7155;
+  color: #fff;
+}
     .option-button.selected {
       background-color: #1c7155;
       color: #fff;
@@ -137,6 +145,44 @@
   </div>
   <script>
 const formFields = [
+  
+  {
+    id: "userGoals",
+    question: "What are your goals in using Wingman?",
+    type: "multi-select",
+    options: [
+      "Get to the gym more regularly",
+      "Eat healthier",
+      "Sleep better",
+      "Reduce stress",
+      "Feel less anxious",
+      "Improve work-life balance",
+      "Be more productive at work",
+      "Communicate better with my partner or family",
+      "Have more confidence",
+      "Break bad habits (like drinking too much, smoking, or procrastinating)",
+      "Feel happier or more motivated",
+      "Make more time for hobbies or things I enjoy",
+      "Handle anger or frustration better",
+      "Be a better dad/partner/friend",
+      "Deal with big life changes (like a breakup, job loss, becoming a dad, etc.)",
+      "Make new friends or improve my social life",
+      "Set and stick to personal goals",
+      "Stop feeling stuck or overwhelmed",
+      "Find more meaning or purpose in life",
+      "Manage money or financial stress better",
+      "Get support for quitting substances (alcohol, drugs, etc.)",
+      "Feel more in control of my emotions",
+      "Have more energy during the day",
+      "Spend less time on my phone or gaming",
+      "Feel less lonely",
+      "Build better daily routines",
+      "Stay accountable to my goals",
+      "Deal with grief or loss",
+      "Prepare for a new job or career change",
+      "Other"
+    ]
+  },
   {
     id: "goals",
     question: "What are you looking for right now? We will provide you with personalized recommendations that could be helpful. Select all that apply.",
@@ -223,6 +269,15 @@ function renderStep() {
   form.innerHTML = "";
   const field = formFields[step];
 
+  if (field.dependsOn) {
+    const { fieldId, value } = field.dependsOn;
+    if (formData[fieldId] !== value) {
+      step++;
+      renderStep();
+      return;
+    }
+  }
+
   const wrapper = document.createElement("div");
   wrapper.className = "input-wrapper";
 
@@ -238,17 +293,23 @@ function renderStep() {
   }
 
   if (field.type === "multi-select" || field.type === "single-select") {
+    const optionsContainer = document.createElement("div");
+    optionsContainer.style.display = "flex";
+    optionsContainer.style.flexWrap = "wrap";
+    optionsContainer.style.gap = "0.5rem";
+    optionsContainer.style.marginTop = "1rem";
+    wrapper.appendChild(optionsContainer);
+
+    formData[field.id] = field.type === "multi-select" ? formData[field.id] || [] : "";
+
     field.options.forEach(opt => {
       const btn = document.createElement("button");
       btn.className = "option-button";
       btn.type = "button";
       btn.innerText = opt;
-      btn.onclick = () => {
-        if (field.type === "single-select") {
-          formData[field.id] = opt;
-          nextStep();
-        } else {
-          formData[field.id] = formData[field.id] || [];
+
+      if (field.type === "multi-select") {
+        btn.onclick = () => {
           if (formData[field.id].includes(opt)) {
             formData[field.id] = formData[field.id].filter(o => o !== opt);
             btn.classList.remove("selected");
@@ -257,39 +318,69 @@ function renderStep() {
             btn.classList.add("selected");
             if (opt === "Crisis Support/Immediate Help") popup.classList.add("active");
           }
-        }
-      };
-      wrapper.appendChild(btn);
+        };
+      } else {
+        btn.onclick = () => {
+          formData[field.id] = opt;
+          Array.from(optionsContainer.children).forEach(child => child.classList.remove("selected"));
+          btn.classList.add("selected");
+          if (field.id === "superpower" || field.id === "workedWithCoach") nextStep();
+        };
+      }
+
+      optionsContainer.appendChild(btn);
     });
-  } else if (field.type === "textarea") {
-    if (field.dependsOn) {
-      const depValue = formData[field.dependsOn.fieldId];
-      if (depValue !== field.dependsOn.value) return nextStep();
-    }
+  }
+
+  if (field.type === "textarea") {
     const textarea = document.createElement("textarea");
-    textarea.oninput = e => formData[field.id] = e.target.value;
+    textarea.placeholder = "Type your response here...";
+    textarea.value = formData[field.id] || "";
+    textarea.oninput = (e) => formData[field.id] = e.target.value;
     wrapper.appendChild(textarea);
-  } else if (field.type === "group") {
-    field.fields.forEach(sub => {
+  }
+
+  if (field.type === "group") {
+    const groupContainer = document.createElement("div");
+    groupContainer.style.display = "flex";
+    groupContainer.style.flexDirection = "column";
+    groupContainer.style.gap = "1.5rem";
+    groupContainer.style.marginTop = "1rem";
+    groupContainer.style.width = "100%";
+
+    field.fields.forEach(subField => {
+      const fieldWrapper = document.createElement("div");
+      fieldWrapper.style.display = "flex";
+      fieldWrapper.style.flexDirection = "column";
+
+      const label = document.createElement("label");
+      label.style.marginBottom = "0.5rem";
+      label.style.fontWeight = "500";
+      label.innerText = subField.label;
+      fieldWrapper.appendChild(label);
+
       const input = document.createElement("input");
-      input.type = sub.type;
-      input.placeholder = sub.label;
-      input.oninput = e => formData[sub.id] = e.target.value;
-      wrapper.appendChild(input);
+      input.type = subField.type;
+      input.name = subField.id;
+      input.value = formData[subField.id] || "";
+      input.style.marginBottom = "0.5rem";
+      input.oninput = (e) => formData[subField.id] = e.target.value;
+      fieldWrapper.appendChild(input);
+
+      groupContainer.appendChild(fieldWrapper);
     });
-  } else if (field.type === "text" || field.type === "email" || field.type === "date") {
-    const input = document.createElement("input");
-    input.type = field.type;
-    input.placeholder = field.label;
-    input.oninput = e => formData[field.id] = e.target.value;
-    wrapper.appendChild(input);
+    wrapper.appendChild(groupContainer);
   }
 
   const btn = document.createElement("button");
-  btn.innerText = step === formFields.length - 1 ? "Submit" : "Next";
+  btn.innerText = (step === formFields.length - 1 && field.id !== "emergencyContact") ? "Submit" : "Next";
   btn.className = "btn";
   btn.type = "button";
   btn.onclick = () => {
+    if (field.type === "single-select" && field.id !== "workedWithCoach" && !formData[field.id]) {
+      alert("Please select an option to continue.");
+      return;
+    }
     if (step < formFields.length - 1) {
       step++;
       renderStep();
@@ -297,10 +388,13 @@ function renderStep() {
       renderFinal();
     }
   };
-  wrapper.appendChild(btn);
+
+  if (field.id !== "workedWithCoach" && field.id !== "superpower") {
+    wrapper.appendChild(btn);
+  }
+
   form.appendChild(wrapper);
 }
-
 function renderFinal() {
   form.innerHTML = `
     <div class="input-wrapper">
