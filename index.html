@@ -7,22 +7,23 @@
   <style>
     body {
       font-family: 'Helvetica Neue', sans-serif;
-      background-color: #fefbf6;
-      color: #222;
+      background-color: #000;
+      color: #fff;
       margin: 0;
-      padding: 0;
+      padding: 2rem;
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: flex-start;
       min-height: 100vh;
     }
     .form-container {
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-      width: 90%;
-      max-width: 600px;
-      padding: 2rem;
+      background: #fff;
+      color: #000;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      width: 100%;
+      max-width: 850px;
+      padding: 3rem;
     }
     .progress-bar {
       display: flex;
@@ -33,52 +34,55 @@
       flex: 1;
       height: 6px;
       margin: 0 2px;
-      background-color: #e0e0e0;
+      background-color: #ddd;
       border-radius: 3px;
     }
     .progress-step.active {
       background-color: #1c7155;
     }
     .question {
-      font-size: 1.25rem;
-      font-weight: bold;
+      font-size: 1.4rem;
+      font-weight: 600;
       margin-bottom: 1rem;
     }
     .input-wrapper {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 1.25rem;
     }
     textarea, input[type="text"], input[type="email"], input[type="date"] {
       font-size: 1rem;
-      padding: 12px;
-      border-radius: 8px;
+      padding: 12px 16px;
+      border-radius: 10px;
       border: 1px solid #ccc;
       width: 100%;
+      background-color: #f9f9f9;
+      color: #000;
     }
     .option-button {
-  background-color: #f0f8f5;
-  border: 1px solid #1c7155;
-  border-radius: 24px;
-  padding: 6px 10px;
-  font-size: 0.8rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: inline-block;
-  margin: 2px;
-  white-space: nowrap;
-}
+      background-color: #f0f0f0;
+      border: 1px solid #1c7155;
+      border-radius: 20px;
+      padding: 10px 14px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-block;
+      margin: 4px;
+      color: #000;
+    }
     .option-button.selected {
       background-color: #1c7155;
       color: #fff;
     }
     .btn {
+      align-self: flex-start;
       margin-top: 2rem;
       background-color: #1c7155;
       color: white;
-      padding: 12px 20px;
+      padding: 12px 24px;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       font-size: 1rem;
       cursor: pointer;
       transition: background 0.3s ease;
@@ -99,7 +103,8 @@
       display: flex;
     }
     .popup-content {
-      background-color: white;
+      background-color: #111;
+      color: #fff;
       padding: 2rem;
       border-radius: 12px;
       max-width: 400px;
@@ -107,7 +112,7 @@
     }
     .popup-content button {
       margin-top: 1rem;
-      padding: 8px 16px;
+      padding: 10px 20px;
       background-color: #1c7155;
       color: white;
       border: none;
@@ -131,206 +136,191 @@
     </div>
   </div>
   <script>
-    const formFields = [
+const formFields = [
   {
-    question: 'What are you looking for right now? We will provide you with personalized recommendations that could be helpful. Select all that apply.',
-    type: 'bubbles',
-    name: 'lookingFor',
-    multi: true,
-    options: ['Mental Health Coaching','Therapy/Counseling','Community/Support Groups','Crisis Support/Immediate Help','Self Help Resources/Tools','Peer Support/Mentorship','Specialized Support (i.e. addiction, fatherhood, relationships, identity, etc.)']
-  },
-  {
-    question: 'What are your goals in using Wingman?<br><small style="font-weight: normal; color: #666;">Select all that apply.</small>',
-    type: 'bubbles',
-    name: 'goals',
-    multi: true,
+    id: "goals",
+    question: "What are you looking for right now? We will provide you with personalized recommendations that could be helpful. Select all that apply.",
+    type: "multi-select",
     options: [
-      'Get to the gym more regularly',
-      'Eat healthier',
-      'Sleep better',
-      'Reduce stress',
-      'Feel less anxious',
-      'Improve work-life balance',
-      'Be more productive at work',
-      'Communicate better with my partner or family',
-      'Have more confidence',
-      'Break bad habits (like drinking too much, smoking, or procrastinating)',
-      'Feel happier or more motivated',
-      'Make more time for hobbies or things I enjoy',
-      'Handle anger or frustration better',
-      'Be a better dad/partner/friend',
-      'Deal with big life changes (like a breakup, job loss, becoming a dad, etc.)',
-      'Make new friends or improve my social life',
-      'Set and stick to personal goals',
-      'Stop feeling stuck or overwhelmed',
-      'Find more meaning or purpose in life',
-      'Manage money or financial stress better',
-      'Get support for quitting substances (alcohol, drugs, etc.)',
-      'Feel more in control of my emotions',
-      'Have more energy during the day',
-      'Spend less time on my phone or gaming',
-      'Feel less lonely',
-      'Build better daily routines',
-      'Stay accountable to my goals',
-      'Deal with grief or loss',
-      'Prepare for a new job or career change',
-      'Other'
-    ]
-  },
-  { 
-    question: 'If you could only pick one superpower for your coach, what would it be?', 
-    type: 'bubbles', 
-    name: 'superpower', 
-    options: ['Incredible Listener','Amazing Motivator','Wealth of Wisdom','Calm, Cool, and Collected','A+ Accountability','Your Bigger Fan & Champion'] 
-  },
-  { 
-    question: 'Have you ever worked with a mental health coach, therapist, or counselor in the past?', 
-    type: 'bubbles', 
-    name: 'experience', 
-    options: ['Yes', 'No'] 
-  },
-  {
-    question: 'Tell us a bit about yourself',
-    type: 'group',
-    fields: [
-      { label: 'Full Name', type: 'text', name: 'name' },
-      { label: 'Date of Birth', type: 'date', name: 'dob' },
-      { label: 'Email Address', type: 'email', name: 'email' },
-      { label: 'Phone Number', type: 'text', name: 'phone' }
+      "Mental Health Coaching",
+      "Therapy/Counseling",
+      "Community/Support Groups",
+      "Crisis Support/Immediate Help",
+      "Self Help Resources/Tools",
+      "Peer Support/Mentorship",
+      "Specialized Support (i.e. addiction, fatherhood, relationships, identity, etc.)"
     ]
   },
   {
-    question: 'Emergency Contact Information',
-    type: 'group',
-    fields: [
-      { label: 'Emergency Contact Full Name', type: 'text', name: 'emergencyName' },
-      { label: 'Emergency Contact Email', type: 'email', name: 'emergencyEmail' },
-      { label: 'Emergency Contact Phone', type: 'text', name: 'emergencyPhone' }
+    id: "superpower",
+    question: "If you could only pick one superpower for your coach, what would it be?",
+    type: "single-select",
+    options: [
+      "Incredible Listener",
+      "Amazing Motivator",
+      "Wealth of Wisdom",
+      "Calm, Cool, and Collected",
+      "A+ Accountability",
+      "Your Bigger Fan & Champion"
     ]
   },
-  
+  {
+    id: "workedWithCoach",
+    question: "Have you ever worked with a mental health coach, therapist, or counselor in the past?",
+    type: "single-select",
+    options: ["Yes", "No"]
+  },
+  {
+    id: "pastExperience",
+    question: "Please share more context on the type(s) of professionals you've seen, how recent, and for which issues.",
+    type: "textarea",
+    optional: true,
+    dependsOn: { fieldId: "workedWithCoach", value: "Yes" },
+    subtext: "No problem if you don't want to share right now! It's just helpful for building our recommendations and facilitating coach matching."
+  },
+  {
+    id: "contactInfo",
+    question: "Let's get your contact details.",
+    type: "group",
+    fields: [
+      { id: "fullName", type: "text", label: "Full Name" },
+      { id: "dob", type: "date", label: "Date of Birth" },
+      { id: "email", type: "email", label: "Email" },
+      { id: "phone", type: "text", label: "Phone Number" }
+    ]
+  },
+  {
+    id: "emergencyContact",
+    question: "Emergency Contact Information",
+    type: "group",
+    fields: [
+      { id: "emergencyFullName", type: "text", label: "Emergency Contact Full Name" },
+      { id: "emergencyEmail", type: "email", label: "Email" },
+      { id: "emergencyPhone", type: "text", label: "Phone Number" }
+    ]
+  }
 ];
 
-let pastExperienceField = {
-  question: `Please share more context on the type(s) of professionals you've seen, how recent, and for which issues.
-<small style="font-weight: normal; color: #666; display: block; margin-top: 0.5rem;">No problem if you don't want to share right now! It's just helpful for building our recommendations and facilitating coach matching.</small>`,
-  type: 'textarea',
-  name: 'pastExperience',
-  optional: true
-};
+const form = document.getElementById("wingmanForm");
+const popup = document.getElementById("crisisPopup");
+const closePopup = document.getElementById("closePopup");
+const progressBar = document.getElementById("progress-bar");
 
-    let currentStep = 0;
-    const form = document.getElementById('wingmanForm');
-    const progressBar = document.getElementById('progress-bar');
-    const popup = document.getElementById('crisisPopup');
-    const closePopup = document.getElementById('closePopup');
-    if (closePopup) closePopup.addEventListener('click', () => popup.classList.remove('active'));
+let step = 0;
+let formData = {};
 
-    function renderProgressBar() {
-      if (!progressBar) return;
-      progressBar.innerHTML = '';
-      formFields.forEach((_, i) => {
-        const stepEl = document.createElement('div');
-        stepEl.className = 'progress-step' + (i <= currentStep ? ' active' : '');
-        progressBar.appendChild(stepEl);
-      });
-    }
-
-    function renderStep() {
-      const field = formFields[currentStep];
-      form.innerHTML = '';
-      renderProgressBar();
-
-      const questionEl = document.createElement('div');
-      questionEl.className = 'question';
-      questionEl.innerHTML = field.question;
-      form.appendChild(questionEl);
-
-      const wrapper = document.createElement('div');
-      wrapper.className = 'input-wrapper';
-if (field.name === 'goals') {
-  wrapper.style.flexDirection = 'row';
-  wrapper.style.justifyContent = 'flex-start';
-  wrapper.style.alignItems = 'flex-start';
-  wrapper.style.columnGap = '0.5rem';
-  wrapper.style.rowGap = '0.5rem';
-}
-wrapper.style.flexWrap = 'wrap';
-      let inputEl;
-
-      if (field.type === 'textarea') {
-  inputEl = document.createElement('textarea');
-  inputEl.name = field.name;
-  wrapper.appendChild(inputEl);
-} else if (field.type === 'bubbles') {
-        inputEl = document.createElement('input');
-        inputEl.type = 'hidden';
-        inputEl.name = field.name;
-        wrapper.appendChild(inputEl);
-
-        const selections = new Set();
-
-        field.options.forEach(opt => {
-          const btn = document.createElement('button');
-          btn.type = 'button';
-          btn.className = 'option-button';
-          btn.textContent = opt;
-          btn.onclick = () => {
-            btn.classList.toggle('selected');
-            selections.has(opt) ? selections.delete(opt) : selections.add(opt);
-            inputEl.value = Array.from(selections).join(', ');
-            if (opt === 'Crisis Support/Immediate Help' && selections.has(opt)) popup.classList.add('active');
-          };
-          wrapper.appendChild(btn);
-        });
-      } else if (field.type === 'group') {
-  field.fields.forEach(subField => {
-    const label = document.createElement('label');
-    label.textContent = subField.label;
-    const input = document.createElement('input');
-    input.type = subField.type;
-    input.name = subField.name;
-    input.required = true;
-    wrapper.appendChild(label);
-    wrapper.appendChild(input);
+function renderProgressBar() {
+  progressBar.innerHTML = "";
+  formFields.forEach((_, idx) => {
+    const stepDiv = document.createElement("div");
+    stepDiv.className = "progress-step" + (idx <= step ? " active" : "");
+    progressBar.appendChild(stepDiv);
   });
-} else {
-  inputEl = document.createElement('input');
-  inputEl.type = field.type;
-  inputEl.name = field.name;
-  wrapper.appendChild(inputEl);
 }
 
-      form.appendChild(wrapper);
+function renderStep() {
+  renderProgressBar();
+  form.innerHTML = "";
+  const field = formFields[step];
 
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'btn';
-      btn.textContent = currentStep === formFields.length - 1 ? 'Submit' : 'Next';
+  const wrapper = document.createElement("div");
+  wrapper.className = "input-wrapper";
+
+  const label = document.createElement("label");
+  label.className = "question";
+  label.innerText = field.question;
+  wrapper.appendChild(label);
+
+  if (field.subtext) {
+    const sub = document.createElement("small");
+    sub.innerText = field.subtext;
+    wrapper.appendChild(sub);
+  }
+
+  if (field.type === "multi-select" || field.type === "single-select") {
+    field.options.forEach(opt => {
+      const btn = document.createElement("button");
+      btn.className = "option-button";
+      btn.type = "button";
+      btn.innerText = opt;
       btn.onclick = () => {
-        if (!inputEl || inputEl.checkValidity()) {
-          currentStep++;
-          if (currentStep < formFields.length) {
-            // Inject follow-up if 'experience' = 'Yes'
-            if (formFields[currentStep - 1]?.name === 'experience') {
-              const response = document.querySelector('input[name="experience"]').value;
-              if (response.includes('Yes')) formFields.splice(currentStep, 0, pastExperienceField);
-            }
-            renderStep();
-          } else {
-            form.innerHTML = `
-              <div class="question">Thank you! We've received your responses.</div>
-              <a href="https://www.wingmanmentalhealth.com/pricing" class="btn">Choose Your Wingman Package</a>
-            `;
-          }
+        if (field.type === "single-select") {
+          formData[field.id] = opt;
+          nextStep();
         } else {
-          inputEl.reportValidity();
+          formData[field.id] = formData[field.id] || [];
+          if (formData[field.id].includes(opt)) {
+            formData[field.id] = formData[field.id].filter(o => o !== opt);
+            btn.classList.remove("selected");
+          } else {
+            formData[field.id].push(opt);
+            btn.classList.add("selected");
+            if (opt === "Crisis Support/Immediate Help") popup.classList.add("active");
+          }
         }
       };
-      form.appendChild(btn);
+      wrapper.appendChild(btn);
+    });
+  } else if (field.type === "textarea") {
+    if (field.dependsOn) {
+      const depValue = formData[field.dependsOn.fieldId];
+      if (depValue !== field.dependsOn.value) return nextStep();
     }
+    const textarea = document.createElement("textarea");
+    textarea.oninput = e => formData[field.id] = e.target.value;
+    wrapper.appendChild(textarea);
+  } else if (field.type === "group") {
+    field.fields.forEach(sub => {
+      const input = document.createElement("input");
+      input.type = sub.type;
+      input.placeholder = sub.label;
+      input.oninput = e => formData[sub.id] = e.target.value;
+      wrapper.appendChild(input);
+    });
+  } else if (field.type === "text" || field.type === "email" || field.type === "date") {
+    const input = document.createElement("input");
+    input.type = field.type;
+    input.placeholder = field.label;
+    input.oninput = e => formData[field.id] = e.target.value;
+    wrapper.appendChild(input);
+  }
 
-    renderStep();
-  </script>
+  const btn = document.createElement("button");
+  btn.innerText = step === formFields.length - 1 ? "Submit" : "Next";
+  btn.className = "btn";
+  btn.type = "button";
+  btn.onclick = () => {
+    if (step < formFields.length - 1) {
+      step++;
+      renderStep();
+    } else {
+      renderFinal();
+    }
+  };
+  wrapper.appendChild(btn);
+  form.appendChild(wrapper);
+}
+
+function renderFinal() {
+  form.innerHTML = `
+    <div class="input-wrapper">
+      <p class="question">Thank you! We've received your responses. Click the button below to choose your package & get started.</p>
+      <a href="https://www.wingmanmentalhealth.com/pricing" class="btn">Choose Your Wingman Package</a>
+    </div>
+  `;
+  renderProgressBar();
+}
+
+if (closePopup) {
+  closePopup.addEventListener("click", () => popup.classList.remove("active"));
+}
+
+function nextStep() {
+  step++;
+  renderStep();
+}
+
+renderStep();
+</script>
 </body>
 </html>
