@@ -6,7 +6,6 @@
   <title>Wingman Mental Health | Onboarding</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    
     .progress-bar {
       display: flex;
       gap: 4px;
@@ -41,14 +40,6 @@
       border-radius: 12px;
       position: relative;
     }
-
-    .progress-bar {
-      display: flex;
-      gap: 4px;
-      margin-bottom: 2rem;
-    }
-
-    
 
     .form-step {
       display: none;
@@ -133,7 +124,7 @@
   </style>
 </head>
 <body>
-  <div class="form-wrapper" style="background: #FFFFFF; padding: 2rem; border-radius: 12px;">
+  <div class="form-wrapper">
     <div class="progress-bar" id="progressBar">
       <div class="progress-segment active" data-index="0"></div>
       <div class="progress-segment" data-index="1"></div>
@@ -162,8 +153,6 @@
         <label style="font-size: 1.75rem; font-weight: 700; display: block; margin-bottom: 0.5rem;">If you could only pick one superpower for your coach, what would it be?</label>
         <div class="bubble-group" style="margin-top: 1rem;" id="coach-superpower-options"></div>
       </div>
-
-      
 
       <div class="form-step" data-step="4">
         <label style="font-size: 1.75rem; font-weight: 700; display: block; margin-bottom: 0.5rem;">Have you ever worked with a mental health coach, therapist, or counselor in the past?</label>
@@ -201,12 +190,13 @@
           <button type="button" class="submit-btn">Choose Your Wingman Package</button>
         </a>
       </div>
+    </form>
+  </div>
 
-<div id="crisis-popup" class="popup hidden" style="display: none;">
-      <div class="popup-content">
-        <p>For crisis support/immediate help please dial 988 for the Suicide & Crisis Hotline, 911, or one of the resources <a href="https://mhanational.org/resources/resources-for-immediate-response/" target="_blank">here</a>.</p>
-        <button id="close-popup">Close</button>
-      </div>
+  <div id="crisis-popup" class="popup hidden" style="display: none;">
+    <div class="popup-content">
+      <p>For crisis support/immediate help please dial 988 for the Suicide & Crisis Hotline, 911, or one of the resources <a href="https://mhanational.org/resources/resources-for-immediate-response/" target="_blank">here</a>.</p>
+      <button id="close-popup">Close</button>
     </div>
   </div>
 
@@ -228,26 +218,22 @@
     };
 
     const goToStep = (step) => {
-    steps.forEach((s, i) => s.classList.toggle('active', i === step));
-    currentStep = step;
-    stepProgress();
-  };
-
-
+      steps.forEach((s, i) => s.classList.toggle('active', i === step));
+      currentStep = step;
+      stepProgress();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     nextBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    goToStep(currentStep + 1);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
+      btn.addEventListener('click', () => {
+        goToStep(currentStep + 1);
+      });
     });
 
     closePopup.addEventListener('click', () => {
       popup.classList.add('hidden');
       popup.style.display = 'none';
     });
-  
 
     const createBubbleOptions = (containerId, options, multi = true, trigger = null) => {
       const container = document.getElementById(containerId);
@@ -300,10 +286,9 @@
       "Sleep better",
       "Spend less time on my phone or gaming",
       "Stay accountable to my goals",
-      "Stop feeling stuck or overwhelmed"
+      "Stop feeling stuck or overwhelmed",
+      "Other"
     ];
-    goalOptions.sort();
-    goalOptions.push("Other");
     createBubbleOptions('goals-options', goalOptions);
 
     createBubbleOptions('looking-for-options', [
@@ -328,7 +313,6 @@
     document.querySelectorAll('[data-step="4"] .bubble-option').forEach(opt => {
       opt.addEventListener('click', () => goToStep(currentStep + 1));
     });
-
-</script>
+  </script>
 </body>
 </html>
