@@ -197,12 +197,17 @@
   currentStep = step;
   stepProgress();
 
-  const wrapper = document.querySelector('.form-wrapper');
-  const yOffset = -20; // Optional: offset for padding if needed
-  const y = wrapper.getBoundingClientRect().top + window.pageYOffset + yOffset;
-
-  window.scrollTo({ top: y, behavior: 'smooth' });
+  // Delay scroll to allow layout to update (fixes mobile scroll issue)
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      const wrapper = document.querySelector('.form-wrapper');
+      const yOffset = -20; // adjust if needed
+      const y = wrapper.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }, 100); // Short delay ensures new content is rendered before scroll
+  });
 };
+
 
   nextBtns.forEach(btn => {
     btn.addEventListener('click', () => {
