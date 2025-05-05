@@ -198,9 +198,10 @@
   stepProgress();
 
   const wrapper = document.querySelector('.form-wrapper');
-  if (wrapper) {
-    wrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
+  const yOffset = -20; // Optional: offset for padding if needed
+  const y = wrapper.getBoundingClientRect().top + window.pageYOffset + yOffset;
+
+  window.scrollTo({ top: y, behavior: 'smooth' });
 };
 
   nextBtns.forEach(btn => {
