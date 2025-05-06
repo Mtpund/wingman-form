@@ -197,20 +197,22 @@
   currentStep = step;
   stepProgress();
 
-  // Scroll to the label of the active step instead of a container
-  const activeStep = steps[step];
-  const targetLabel = activeStep.querySelector('label');
+  // Delay scrolling slightly to let DOM re-render fully
+  setTimeout(() => {
+    const activeStep = steps[step];
+    const targetLabel = activeStep.querySelector('label');
+    const scrollTarget = targetLabel || document.querySelector('.form-wrapper');
 
-  if (targetLabel) {
-    targetLabel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  } else {
-    // fallback to form wrapper
-    const wrapper = document.querySelector('.form-wrapper');
-    if (wrapper) {
-      wrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (scrollTarget) {
+      const offset = scrollTarget.getBoundingClientRect().top + window.scrollY - 20;
+      window.scrollTo({
+        top: offset,
+        behavior: 'smooth'
+      });
     }
-  }
+  }, 100); // allow reflow before scrolling
 };
+
 
 
 
