@@ -144,10 +144,11 @@
       <div class="form-step" data-step="5">
         <label style="font-size: 1.75rem; font-weight: 700; display: block; margin-bottom: 0.5rem;">Let's get your contact details.</label>
         <div style="margin-top: 1rem; display: flex; flex-direction: column; gap: 1rem;">
-          <input type="text" placeholder="Full Name" required>
-          <input type="date" placeholder="Date of Birth" required>
-          <input type="email" placeholder="Email" required>
-          <input type="tel" placeholder="Phone Number" required>
+           <input type="text" name="full_name" placeholder="Full Name" required>
+            <input type="date" name="dob" placeholder="Date of Birth" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="tel" name="phone" placeholder="Phone Number" required>
+
         </div>
         <button type="button" class="next-btn">Next</button>
       </div>
@@ -155,9 +156,10 @@
       <div class="form-step" data-step="6">
         <label style="font-size: 1.75rem; font-weight: 700; display: block; margin-bottom: 0.5rem;">Emergency Contact Information</label>
         <div style="margin-top: 1rem; display: flex; flex-direction: column; gap: 1rem;">
-          <input type="text" placeholder="Emergency Contact Full Name" required>
-          <input type="email" placeholder="Email" required>
-          <input type="tel" placeholder="Phone Number" required>
+         <input type="text" name="emergency_name" placeholder="Emergency Contact Full Name" required>
+          <input type="email" name="emergency_email" placeholder="Email" required>
+          <input type="tel" name="emergency_phone" placeholder="Phone Number" required>
+
         </div>
         <button type="button" class="next-btn">Next</button>
       </div>
