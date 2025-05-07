@@ -303,10 +303,12 @@ document.querySelectorAll('[data-step="4"] .bubble-option').forEach(opt => {
   opt.addEventListener('click', () => {
     // Deselect all options first
     document.querySelectorAll('[data-step="4"] .bubble-option').forEach(o => o.classList.remove('selected'));
+    "worked_with_provider": "Yes" // or "No"
     // Select the clicked one
     opt.classList.add('selected');
     // Advance to next step
     goToStep(currentStep + 1);
+  
   });
 });
 
