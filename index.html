@@ -297,6 +297,18 @@
     "Your Bigger Fan & Champion"
   ], false);
 
+document.querySelectorAll('[data-step="4"] .bubble-option').forEach(opt => {
+  opt.addEventListener('click', () => {
+    // Deselect all options first
+    document.querySelectorAll('[data-step="4"] .bubble-option').forEach(o => o.classList.remove('selected'));
+    // Select the clicked one
+    opt.classList.add('selected');
+    // Advance to next step
+    goToStep(currentStep + 1);
+  });
+});
+
+
   // ✅ Final step submit handler
 document.getElementById('submitFinal').addEventListener('click', function () {
   const form = document.getElementById('wingman-form');
