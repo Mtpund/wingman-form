@@ -305,12 +305,11 @@ document.querySelectorAll('[data-step="4"] .bubble-option').forEach(opt => {
     document.querySelectorAll('[data-step="4"] .bubble-option').forEach(o => o.classList.remove('selected'));
     // Select the clicked one
     opt.classList.add('selected');
-    // Set hidden input value
-    document.getElementById('workedWithProvider').value = opt.textContent;
     // Advance to next step
     goToStep(currentStep + 1);
   });
 });
+
 
   // ✅ Final step submit handler
 document.getElementById('submitFinal').addEventListener('click', function () {
