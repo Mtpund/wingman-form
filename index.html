@@ -171,8 +171,9 @@
       </p>
 
       <input type="hidden" name="_redirect" value="https://wingmanmentalhealth.com/pricing">
-      <button type="submit" class="submit-btn">Submit</button>
-    </div>
+      <button type="button" class="submit-btn" id="submitFinal">Submit</button>
+      </div>
+
     </form>
   </div>
 
@@ -296,9 +297,17 @@
     "Your Bigger Fan & Champion"
   ], false);
 
-  document.querySelectorAll('[data-step="4"] .bubble-option').forEach(opt => {
-    opt.addEventListener('click', () => goToStep(currentStep + 1));
-  });
+  // ✅ Final step submit handler
+document.getElementById('submitFinal').addEventListener('click', function () {
+  const form = document.getElementById('wingman-form');
+  console.log('Submitting form manually...');
+  form.submit();
+});
+
+// (Optional) Debug log to confirm native submit fires
+document.getElementById('wingman-form').addEventListener('submit', function () {
+  console.log('Form submitted to Formspree.');
+});
 </script>
 </body>
 </html>
